@@ -7,7 +7,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" ref="navbarCollapse" id="navbarNavAltMarkup">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <router-link @click="onClick" class="nav-link" to="/">Live Data</router-link>
                     </li>
@@ -72,6 +72,9 @@
                         <router-link @click="onClick" class="nav-link" to="/about">About</router-link>
                     </li>
                 </ul>
+                <form class="d-flex" role="search" v-if="isLogged">
+                    <button class="btn btn-outline-danger" @click="signout">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
@@ -79,13 +82,32 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { logout, isLoggedIn } from '@/utils/authentication';
 import { BIconSun } from 'bootstrap-icons-vue';
 
 export default defineComponent({
     components: {
         BIconSun,
     },
+    data() {
+        return {
+            isLogged: this.isLoggedIn(),
+        }
+    },
+    created() {
+        this.$emitter.on("logged-in", () => {
+            this.isLogged = this.isLoggedIn();
+        });
+    },
     methods: {
+        isLoggedIn,
+        logout,
+        signout(e: Event) {
+            e.preventDefault();
+            this.logout();
+            this.isLogged = this.isLoggedIn();
+            this.$router.push('/');
+        },
         onClick() {
             this.$refs.navbarCollapse && (this.$refs.navbarCollapse as HTMLElement).classList.remove("show");
         }
