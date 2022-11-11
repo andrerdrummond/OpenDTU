@@ -39,6 +39,7 @@ Several screenshots of the frontend can be found here: [Screenshots](docs/screen
 * Default source supports up to 10 inverters
 * Time zone support
 * Ethernet support
+* Prometheus API endpoint (/api/prometheus/metrics)
 
 ## Features for developers
 * The microcontroller part
@@ -186,6 +187,9 @@ After the successful upload, the OpenDTU immediately restarts into the new firmw
 
 ## MQTT Topic Documentation
 A documentation of all available MQTT Topics can be found here: [MQTT Documentation](docs/MQTT_Topics.md)
+
+## Web API Documentation
+A documentation of the Web API can be found here: [Web-API Documentation](docs/Web-API.md)
 
 ## Available cases
 * <https://www.thingiverse.com/thing:5435911>
