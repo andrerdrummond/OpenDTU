@@ -3,9 +3,9 @@
  * Copyright (C) 2022 Thomas Basler and others
  */
 #include "Configuration.h"
-#include "Hoymiles.h"
-#include "MqttHassPublishing.h"
-#include "MqttPublishing.h"
+#include "MqttHandleDtu.h"
+#include "MqttHandleHass.h"
+#include "MqttHandleInverter.h"
 #include "MqttSettings.h"
 #include "NetworkSettings.h"
 #include "NtpSettings.h"
@@ -13,6 +13,7 @@
 #include "WebApi.h"
 #include "defaults.h"
 #include <Arduino.h>
+#include <Hoymiles.h>
 #include <LittleFS.h>
 
 void setup()
@@ -68,8 +69,9 @@ void setup()
     // Initialize MqTT
     Serial.print(F("Initialize MqTT... "));
     MqttSettings.init();
-    MqttPublishing.init();
-    MqttHassPublishing.init();
+    MqttHandleDtu.init();
+    MqttHandleInverter.init();
+    MqttHandleHass.init();
     Serial.println(F("done"));
 
     // Initialize WebApi
@@ -133,9 +135,11 @@ void loop()
     yield();
     Hoymiles.loop();
     yield();
-    MqttPublishing.loop();
+    MqttHandleDtu.loop();
     yield();
-    MqttHassPublishing.loop();
+    MqttHandleInverter.loop();
+    yield();
+    MqttHandleHass.loop();
     yield();
     WebApi.loop();
     yield();
