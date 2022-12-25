@@ -102,15 +102,15 @@
 </template>
 
 <script lang="ts">
+import { isLoggedIn, logout } from '@/utils/authentication';
+import { BIconEgg, BIconSun, BIconTree } from 'bootstrap-icons-vue';
 import { defineComponent } from 'vue';
-import { logout, isLoggedIn } from '@/utils/authentication';
-import { BIconSun, BIconTree, BIconEgg } from 'bootstrap-icons-vue';
 
 export default defineComponent({
     components: {
+        BIconEgg,
         BIconSun,
         BIconTree,
-        BIconEgg,
     },
     data() {
         return {
