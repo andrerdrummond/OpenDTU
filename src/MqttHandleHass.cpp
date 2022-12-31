@@ -120,7 +120,7 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, ui
         createDeviceInfo(deviceObj, inv);
 
         if (Configuration.get().Mqtt_Hass_Expire) {
-            root[F("exp_aft")] = Hoymiles.getNumInverters() * Configuration.get().Mqtt_PublishInterval * 4;
+            root[F("exp_aft")] = Hoymiles.getNumInverters() * Configuration.get().Mqtt_PublishInterval * 3;
         }
         if (devCls != 0) {
             root[F("dev_cla")] = devCls;
