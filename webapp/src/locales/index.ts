@@ -2,7 +2,7 @@ import type { I18nOptions } from "vue-i18n";
 import en from './en.json'
 import de from './de.json'
 import fr from './fr.json'
-import pt_br from './pt_br.json'
+import pt_br from './ptbr.json'
 
 export enum Locales {
     EN = 'en',
