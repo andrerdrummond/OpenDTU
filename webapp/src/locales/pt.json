@@ -22,7 +22,7 @@
         "Login": "Login"
     },
     "base": {
-        "Loading": "Loading..."
+        "Loading": "Carregndo..."
     },
     "apiresponse": {
         "1001": "Definições salva!",
@@ -259,8 +259,8 @@
         "CopyToClipboard": "Copiar para o clipboard"
     },
     "inverterchannelinfo": {
-        "String": "Arranjo {num}",
-        "Phase": "Painel {num}",
+        "String": "Painel {num}",
+        "Phase": "Arranjo {num}",
         "Property": "Propriedade",
         "Value": "Valor",
         "Unit": "Unidade"

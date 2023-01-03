@@ -15,7 +15,7 @@ export const LOCALES = [
     { value: Locales.EN, caption: 'English' },
     { value: Locales.DE, caption: 'Deutsch' },
     { value: Locales.FR, caption: 'Français' },
-    { value: Locales.PT, caption: 'Português Brasil' },
+    { value: Locales.PT, caption: 'Português' },
 ]
 
 export const messages: I18nOptions["messages"] = {
@@ -69,7 +69,7 @@ export const dateTimeFormats: I18nOptions["datetimeFormats"] = {
             day: 'numeric',
             hour12: false
         }
-    }
+    },
 };
 
 export const numberFormats: I18nOptions["numberFormats"] = {
@@ -108,6 +108,23 @@ export const numberFormats: I18nOptions["numberFormats"] = {
         },
     },
     [Locales.FR]: {
+        decimal: {
+            style: 'decimal',
+        },
+        decimalNoDigits: {
+            style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0
+        },
+        decimalTwoDigits: {
+            style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2
+        },
+        percent: {
+          style: 'percent',
+        },
+        kilobyte: {
+            style: 'unit', unit: 'kilobyte',
+        },
+    },
+    [Locales.PT]: {
         decimal: {
             style: 'decimal',
         },
