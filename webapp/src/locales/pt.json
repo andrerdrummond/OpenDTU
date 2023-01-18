@@ -88,7 +88,7 @@
         "LiveData": "Ao vivo",
         "SerialNumber": "Número Serial: ",
         "CurrentLimit": "Limite de corrente: ",
-        "DataAge": "Tempo ativo: ",
+        "DataAge": "Última atualização: ",
         "Seconds": "{val} segundos",
         "ShowSetInverterLimit": "Mostrar / Setar limite do inversor",
         "TurnOnOff": "Ligar/Desligar inversor",
@@ -143,7 +143,7 @@
     },
     "firmwareinfo": {
         "FirmwareInformation": "Informação de Firmware",
-        "Hostname": "Hostname",
+        "Hostname": "Nome do servidor",
         "SdkVersion": "SDK Version",
         "ConfigVersion": "Versão de Config",
         "FirmwareVersion": "Versão de Firmware / Git Hash",
@@ -156,23 +156,23 @@
         "Uptime": "Tempo ativo"
     },
     "hardwareinfo": {
-        "HardwareInformation": "Hardware Information",
-        "ChipModel": "Chip Model",
-        "ChipRevision": "Chip Revision",
-        "ChipCores": "Chip Cores",
-        "CpuFrequency": "CPU Frequency",
+        "HardwareInformation": "Informação de Hardware",
+        "ChipModel": "Modelo do Chip",
+        "ChipRevision": "Revisão do Chip",
+        "ChipCores": "Núcleos do Chip",
+        "CpuFrequency": "Frequência do CPU",
         "Mhz": "MHz"
     },
     "memoryinfo": {
-        "MemoryInformation": "Memory Information",
-        "Type": "Type",
-        "Usage": "Usage",
-        "Free": "Free",
-        "Used": "Used",
-        "Size": "Size",
-        "Heap": "Heap",
+        "MemoryInformation": "Informação de Memória",
+        "Type": "Tipo",
+        "Usage": "Uso",
+        "Free": "Livre",
+        "Used": "Usado",
+        "Size": "Tamanho",
+        "Heap": "Pilha",
         "LittleFs": "LittleFs",
-        "Sketch": "Sketch"
+        "Sketch": "Esboço"
     },
     "radioinfo": {
         "RadioInformation": "Informação de Radio",
@@ -200,7 +200,7 @@
         "Enabled": "@:wifistationinfo.Enabled",
         "Disabled": "@:wifistationinfo.Disabled",
         "Ssid": "@:wifistationinfo.Ssid",
-        "Stations": "# Stations"
+        "Stations": "# Estações"
     },
     "interfacenetworkinfo": {
         "NetworkInterface": "Interface de Rede ({iface})",
@@ -447,16 +447,16 @@
     "about": {
         "AboutOpendtu": "Sobre OpenDTU",
         "ProjectOrigin": "Origem do Projeto",
-        "ProjectOriginBody1": "Esse ´projeto teve início de <a href=\"https://www.mikrocontroller.net/topic/525778\" target=\"_blank\">this discussion. (Mikrocontroller.net)</a>",
+        "ProjectOriginBody1": "Esse projeto teve início de <a href=\"https://www.mikrocontroller.net/topic/525778\" target=\"_blank\">this discussion. (Mikrocontroller.net)</a>",
         "ProjectOriginBody2": "O protocolo Hoymiles foi decriptado através de esforços voluntários que vários participantes. OpenDTU, entre outros, foi desenvolvido baseado nesse trabalho. Esse projeto é Open Source License (<a href=\"https://www.gnu.de/documents/gpl-2.0.de.html\" target=\"_blank\">GNU General Public License version 2</a>).",
-        "ProjectOriginBody3": "The software was developed to the best of our knowledge and belief. Nevertheless, no liability can be accepted for a malfunction or guarantee loss of the inverter.",
+        "ProjectOriginBody3": "O software foi desenvolvido para o nosso melhor conhecimento. Mesmo assim,  Nevertheless, nenhuma responsabilidade será aceita por mau funcionamento ou perda de garantia do inversor.",
         "ProjectOriginBody4": "OpenDTU é disponibilizado gratuitamente. Caso você tenha pago algum valor pelo software, você provavelmente sofreu um golpe.",
         "NewsUpdates": "Novidades & Atualizações",
         "NewsUpdatesBody": "Novas atualizações podem ser encontradas em Github: <a href=\"https://github.com/tbnobody/OpenDTU\" target=\"_blank\">https://github.com/tbnobody/OpenDTU</a>",
         "ErrorReporting": "Reportar Erro",
         "ErrorReportingBody": "Por gentileza repostar problemas em <a href=\"https://github.com/tbnobody/OpenDTU/issues\" target=\"_blank\">Github</a>",
         "Discussion": "Discussões",
-        "DiscussionBody": "Discussões com a gente em<a href=\"https://discord.gg/WzhxEY62mB\" target=\"_blank\">Discord</a> or <a href=\"https://github.com/tbnobody/OpenDTU/discussions\" target=\"_blank\">Github</a>"
+        "DiscussionBody": "Discussões com a gente em <a href=\"https://discord.gg/WzhxEY62mB\" target=\"_blank\">Discord</a> or <a href=\"https://github.com/tbnobody/OpenDTU/discussions\" target=\"_blank\">Github</a>"
     },
     "hints": {
         "RadioProblem": "Não foi possível conectar corretamente ao módulo NRF24L01+. Por favor verifique o cabeamento.",
