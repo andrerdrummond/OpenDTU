@@ -8,6 +8,7 @@
         "InverterSettings": "Definições do Inversor",
         "SecuritySettings": "Definições de Segurança",
         "DTUSettings": "Definições do DTU",
+        "DeviceManager": "Gerenciar dispositivo",
         "ConfigManagement": "Gerenciador de Config",
         "FirmwareUpgrade": "Atualização de Firmware",
         "DeviceReboot": "Reiniciar dispositivo",
