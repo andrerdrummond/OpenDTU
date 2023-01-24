@@ -464,5 +464,28 @@
         "TimeSyncLink": "Por favor verifique suas configurações de hora.",
         "DefaultPassword": "Você está usando a senha padrão para a interface web e o ponto de acesso emergencial. Isto é potencialmente inseguro.",
         "DefaultPasswordLink": "Por favor troque a senha"
+    },
+    "deviceadmin": {
+        "DeviceManager": "Gerenciar dispositivo",
+        "PinAssignment": "Configurações de conexões",
+        "SelectedProfile": "Perfil selecionado:",
+        "DefaultProfile": "(Configurações padrões)",
+        "ProfileHint": "Seu dispositivo pode parar de responder caso você selecione um perfil incompativel. Neste caso, você deverá realizar uma deleção através da interface serial.",
+        "Display": "Tela",
+        "PowerSafe": "Habilitar redução de consumo de energia:",
+        "PowerSafeHint": "Desligar a tela caso o inversor não esteja produzindo.",
+        "Screensaver": "Habilitar Proteção de tela:",
+        "ScreensaverHint": "Mova a tela um pouco a cada atualização para prevenir burn-in. (Útil especialmente para telas OLED)",
+        "ShowLogo": "Mostrar Logo:",
+        "Contrast": "Contraste ({contrast}):",
+        "Save": "@:dtuadmin.Save"
+    },
+    "pininfo": {
+        "PinOverview": "Connection overview",
+        "Category": "Category",
+        "Name": "Name",
+        "Number": "Number",
+        "ValueSelected": "Selected",
+        "ValueActive": "Active"
     }
 }
