@@ -1,8 +1,4 @@
 import type { I18nOptions } from "vue-i18n";
-import en from './en.json'
-import de from './de.json'
-import fr from './fr.json'
-import pt from './pt.json'
 
 export enum Locales {
     EN = 'en',
@@ -17,13 +13,6 @@ export const LOCALES = [
     { value: Locales.FR, caption: 'Français' },
     { value: Locales.PT, caption: 'Português' },
 ]
-
-export const messages: I18nOptions["messages"] = {
-    [Locales.EN]: en,
-    [Locales.DE]: de,
-    [Locales.FR]: fr,
-    [Locales.PT]: pt,
-};
 
 export const dateTimeFormats: I18nOptions["datetimeFormats"] = {
     [Locales.EN]: {
