@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * Copyright (C) 2023 Thomas Basler and others
+ */
 #include "Display_Graphic.h"
 #include "Datastore.h"
 #include <NetworkSettings.h>
@@ -39,7 +42,7 @@ DisplayGraphicClass::~DisplayGraphicClass()
     delete _display;
 }
 
-void DisplayGraphicClass::init(DisplayType_t type, uint8_t data, uint8_t clk, uint8_t cs, uint8_t reset)
+void DisplayGraphicClass::init(Scheduler& scheduler, const DisplayType_t type, const uint8_t data, const uint8_t clk, const uint8_t cs, const uint8_t reset)
 {
     _display_type = type;
     if (_display_type > DisplayType_t::None) {
@@ -49,6 +52,12 @@ void DisplayGraphicClass::init(DisplayType_t type, uint8_t data, uint8_t clk, ui
         setContrast(DISPLAY_CONTRAST);
         setStatus(true);
     }
+
+    scheduler.addTask(_loopTask);
+    _loopTask.setCallback(std::bind(&DisplayGraphicClass::loop, this));
+    _loopTask.setIterations(TASK_FOREVER);
+    _loopTask.setInterval(_period);
+    _loopTask.enable();
 }
 
 void DisplayGraphicClass::calcLineHeights()
@@ -61,7 +70,7 @@ void DisplayGraphicClass::calcLineHeights()
     }
 }
 
-void DisplayGraphicClass::setFont(uint8_t line)
+void DisplayGraphicClass::setFont(const uint8_t line)
 {
     switch (line) {
     case 0:
@@ -76,7 +85,7 @@ void DisplayGraphicClass::setFont(uint8_t line)
     }
 }
 
-void DisplayGraphicClass::printText(const char* text, uint8_t line)
+void DisplayGraphicClass::printText(const char* text, const uint8_t line)
 {
     uint8_t dispX;
     if (!_isLarge) {
@@ -90,7 +99,7 @@ void DisplayGraphicClass::printText(const char* text, uint8_t line)
     _display->drawStr(dispX, _lineOffsets[line], text);
 }
 
-void DisplayGraphicClass::setOrientation(uint8_t rotation)
+void DisplayGraphicClass::setOrientation(const uint8_t rotation)
 {
     if (_display_type == DisplayType_t::None) {
         return;
@@ -115,7 +124,7 @@ void DisplayGraphicClass::setOrientation(uint8_t rotation)
     calcLineHeights();
 }
 
-void DisplayGraphicClass::setLanguage(uint8_t language)
+void DisplayGraphicClass::setLanguage(const uint8_t language)
 {
     _display_language = language < sizeof(languages) / sizeof(languages[0]) ? language : DISPLAY_LANGUAGE;
 }
@@ -137,65 +146,63 @@ void DisplayGraphicClass::loop()
         return;
     }
 
-    if ((millis() - _lastDisplayUpdate) > _period) {
+    _loopTask.setInterval(_period);
 
-        _display->clearBuffer();
-        bool displayPowerSave = false;
+    _display->clearBuffer();
+    bool displayPowerSave = false;
 
-        //=====> Actual Production ==========
-        if (Datastore.getIsAtLeastOneReachable()) {
-            displayPowerSave = false;
-            if (Datastore.getTotalAcPowerEnabled() > 999) {
-                snprintf(_fmtText, sizeof(_fmtText), i18n_current_power_kw[_display_language], (Datastore.getTotalAcPowerEnabled() / 1000));
-            } else {
-                snprintf(_fmtText, sizeof(_fmtText), i18n_current_power_w[_display_language], Datastore.getTotalAcPowerEnabled());
-            }
-            printText(_fmtText, 0);
-            _previousMillis = millis();
-        }
-        //<=======================
-
-        //=====> Offline ===========
-        else {
-            printText(i18n_offline[_display_language], 0);
-            // check if it's time to enter power saving mode
-            if (millis() - _previousMillis >= (_interval * 2)) {
-                displayPowerSave = enablePowerSafe;
-            }
-        }
-        //<=======================
-
-        //=====> Today & Total Production =======
-        snprintf(_fmtText, sizeof(_fmtText), i18n_yield_today_wh[_display_language], Datastore.getTotalAcYieldDayEnabled());
-        printText(_fmtText, 1);
-
-        snprintf(_fmtText, sizeof(_fmtText), i18n_yield_total_kwh[_display_language], Datastore.getTotalAcYieldTotalEnabled());
-        printText(_fmtText, 2);
-        //<=======================
-
-        //=====> IP or Date-Time ========
-        if (!(_mExtra % 10) && NetworkSettings.localIP()) {
-            printText(NetworkSettings.localIP().toString().c_str(), 3);
+    //=====> Actual Production ==========
+    if (Datastore.getIsAtLeastOneReachable()) {
+        displayPowerSave = false;
+        if (Datastore.getTotalAcPowerEnabled() > 999) {
+            snprintf(_fmtText, sizeof(_fmtText), i18n_current_power_kw[_display_language], (Datastore.getTotalAcPowerEnabled() / 1000));
         } else {
-            // Get current time
-            time_t now = time(nullptr);
-            strftime(_fmtText, sizeof(_fmtText), i18n_date_format[_display_language], localtime(&now));
-            printText(_fmtText, 3);
+            snprintf(_fmtText, sizeof(_fmtText), i18n_current_power_w[_display_language], Datastore.getTotalAcPowerEnabled());
         }
-        _display->sendBuffer();
-
-        _mExtra++;
-        _lastDisplayUpdate = millis();
-
-        if (!_displayTurnedOn) {
-            displayPowerSave = true;
-        }
-
-        _display->setPowerSave(displayPowerSave);
+        printText(_fmtText, 0);
+        _previousMillis = millis();
     }
+    //<=======================
+
+    //=====> Offline ===========
+    else {
+        printText(i18n_offline[_display_language], 0);
+        // check if it's time to enter power saving mode
+        if (millis() - _previousMillis >= (_interval * 2)) {
+            displayPowerSave = enablePowerSafe;
+        }
+    }
+    //<=======================
+
+    //=====> Today & Total Production =======
+    snprintf(_fmtText, sizeof(_fmtText), i18n_yield_today_wh[_display_language], Datastore.getTotalAcYieldDayEnabled());
+    printText(_fmtText, 1);
+
+    snprintf(_fmtText, sizeof(_fmtText), i18n_yield_total_kwh[_display_language], Datastore.getTotalAcYieldTotalEnabled());
+    printText(_fmtText, 2);
+    //<=======================
+
+    //=====> IP or Date-Time ========
+    if (!(_mExtra % 10) && NetworkSettings.localIP()) {
+        printText(NetworkSettings.localIP().toString().c_str(), 3);
+    } else {
+        // Get current time
+        time_t now = time(nullptr);
+        strftime(_fmtText, sizeof(_fmtText), i18n_date_format[_display_language], localtime(&now));
+        printText(_fmtText, 3);
+    }
+    _display->sendBuffer();
+
+    _mExtra++;
+
+    if (!_displayTurnedOn) {
+        displayPowerSave = true;
+    }
+
+    _display->setPowerSave(displayPowerSave);
 }
 
-void DisplayGraphicClass::setContrast(uint8_t contrast)
+void DisplayGraphicClass::setContrast(const uint8_t contrast)
 {
     if (_display_type == DisplayType_t::None) {
         return;
@@ -203,7 +210,7 @@ void DisplayGraphicClass::setContrast(uint8_t contrast)
     _display->setContrast(contrast * 2.55f);
 }
 
-void DisplayGraphicClass::setStatus(bool turnOn)
+void DisplayGraphicClass::setStatus(const bool turnOn)
 {
     _displayTurnedOn = turnOn;
 }

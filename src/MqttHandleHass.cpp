@@ -1,16 +1,21 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 /*
- * Copyright (C) 2022 Thomas Basler and others
+ * Copyright (C) 2022-2023 Thomas Basler and others
  */
 #include "MqttHandleHass.h"
 #include "MqttHandleInverter.h"
 #include "MqttSettings.h"
 #include "NetworkSettings.h"
+#include "defaults.h"
 
 MqttHandleHassClass MqttHandleHass;
 
-void MqttHandleHassClass::init()
+void MqttHandleHassClass::init(Scheduler& scheduler)
 {
+    scheduler.addTask(_loopTask);
+    _loopTask.setCallback(std::bind(&MqttHandleHassClass::loop, this));
+    _loopTask.setIterations(TASK_FOREVER);
+    _loopTask.enable();
 }
 
 void MqttHandleHassClass::loop()
@@ -37,7 +42,7 @@ void MqttHandleHassClass::forceUpdate()
 
 void MqttHandleHassClass::publishConfig()
 {
-    if (!Configuration.get().Mqtt_Hass_Enabled) {
+    if (!Configuration.get().Mqtt.Hass.Enabled) {
         return;
     }
 
@@ -55,11 +60,11 @@ void MqttHandleHassClass::publishConfig()
         publishInverterButton(inv, "Turn Inverter On", "mdi:power-plug", "config", "", "cmd/power", "1");
         publishInverterButton(inv, "Restart Inverter", "", "config", "restart", "cmd/restart", "1");
 
-        publishInverterNumber(inv, "Limit NonPersistent Relative", "mdi:speedometer", "config", "cmd/limit_nonpersistent_relative", "status/limit_relative", "%");
-        publishInverterNumber(inv, "Limit Persistent Relative", "mdi:speedometer", "config", "cmd/limit_persistent_relative", "status/limit_relative", "%");
+        publishInverterNumber(inv, "Limit NonPersistent Relative", "mdi:speedometer", "config", "cmd/limit_nonpersistent_relative", "status/limit_relative", "%", 0, 100);
+        publishInverterNumber(inv, "Limit Persistent Relative", "mdi:speedometer", "config", "cmd/limit_persistent_relative", "status/limit_relative", "%", 0, 100);
 
-        publishInverterNumber(inv, "Limit NonPersistent Absolute", "mdi:speedometer", "config", "cmd/limit_nonpersistent_absolute", "status/limit_absolute", "W", 10, 2250);
-        publishInverterNumber(inv, "Limit Persistent Absolute", "mdi:speedometer", "config", "cmd/limit_persistent_absolute", "status/limit_absolute", "W", 10, 2250);
+        publishInverterNumber(inv, "Limit NonPersistent Absolute", "mdi:speedometer", "config", "cmd/limit_nonpersistent_absolute", "status/limit_absolute", "W", 0, MAX_INVERTER_LIMIT);
+        publishInverterNumber(inv, "Limit Persistent Absolute", "mdi:speedometer", "config", "cmd/limit_persistent_absolute", "status/limit_absolute", "W", 0, MAX_INVERTER_LIMIT);
 
         publishInverterBinarySensor(inv, "Reachable", "status/reachable", "1", "0");
         publishInverterBinarySensor(inv, "Producing", "status/producing", "1", "0");
@@ -69,7 +74,7 @@ void MqttHandleHassClass::publishConfig()
             for (auto& c : inv->Statistics()->getChannelsByType(t)) {
                 for (uint8_t f = 0; f < DEVICE_CLS_ASSIGN_LIST_LEN; f++) {
                     bool clear = false;
-                    if (t == TYPE_DC && !config.Mqtt_Hass_IndividualPanels) {
+                    if (t == TYPE_DC && !config.Mqtt.Hass.IndividualPanels) {
                         clear = true;
                     }
                     publishField(inv, t, c, deviceFieldAssignment[f], clear);
@@ -81,13 +86,13 @@ void MqttHandleHassClass::publishConfig()
     }
 }
 
-void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, ChannelType_t type, ChannelNum_t channel, byteAssign_fieldDeviceClass_t fieldType, bool clear)
+void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, const ChannelType_t type, const ChannelNum_t channel, const byteAssign_fieldDeviceClass_t fieldType, const bool clear)
 {
     if (!inv->Statistics()->hasChannelFieldValue(type, channel, fieldType.fieldId)) {
         return;
     }
 
-    String serial = inv->serialString();
+    const String serial = inv->serialString();
 
     String fieldName;
     if (type == TYPE_AC && fieldType.fieldId == FLD_PDC) {
@@ -104,12 +109,12 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
         chanNum = channel;
     }
 
-    String configTopic = "sensor/dtu_" + serial
+    const String configTopic = "sensor/dtu_" + serial
         + "/" + "ch" + chanNum + "_" + fieldName
         + "/config";
 
     if (!clear) {
-        String stateTopic = MqttSettings.getPrefix() + MqttHandleInverter.getTopic(inv, type, channel, fieldType.fieldId);
+        const String stateTopic = MqttSettings.getPrefix() + MqttHandleInverter.getTopic(inv, type, channel, fieldType.fieldId);
         const char* devCls = deviceClasses[fieldType.deviceClsId];
         const char* stateCls = stateClasses[fieldType.stateClsId];
 
@@ -133,8 +138,8 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
         JsonObject deviceObj = root.createNestedObject("dev");
         createDeviceInfo(deviceObj, inv);
 
-        if (Configuration.get().Mqtt_Hass_Expire) {
-            root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval(), Configuration.get().Mqtt_PublishInterval) * inv->getReachableThreshold();
+        if (Configuration.get().Mqtt.Hass.Expire) {
+            root["exp_aft"] = Hoymiles.getNumInverters() * max<uint32_t>(Hoymiles.PollInterval(), Configuration.get().Mqtt.PublishInterval) * inv->getReachableThreshold();
         }
         if (devCls != 0) {
             root["dev_cla"] = devCls;
@@ -153,17 +158,17 @@ void MqttHandleHassClass::publishField(std::shared_ptr<InverterAbstract> inv, Ch
 
 void MqttHandleHassClass::publishInverterButton(std::shared_ptr<InverterAbstract> inv, const char* caption, const char* icon, const char* category, const char* deviceClass, const char* subTopic, const char* payload)
 {
-    String serial = inv->serialString();
+    const String serial = inv->serialString();
 
     String buttonId = caption;
     buttonId.replace(" ", "_");
     buttonId.toLowerCase();
 
-    String configTopic = "button/dtu_" + serial
+    const String configTopic = "button/dtu_" + serial
         + "/" + buttonId
         + "/config";
 
-    String cmdTopic = MqttSettings.getPrefix() + serial + "/" + subTopic;
+    const String cmdTopic = MqttSettings.getPrefix() + serial + "/" + subTopic;
 
     DynamicJsonDocument root(1024);
     root["name"] = caption;
@@ -189,20 +194,20 @@ void MqttHandleHassClass::publishInverterButton(std::shared_ptr<InverterAbstract
 void MqttHandleHassClass::publishInverterNumber(
     std::shared_ptr<InverterAbstract> inv, const char* caption, const char* icon, const char* category,
     const char* commandTopic, const char* stateTopic, const char* unitOfMeasure,
-    int16_t min, int16_t max)
+    const int16_t min, const int16_t max)
 {
-    String serial = inv->serialString();
+    const String serial = inv->serialString();
 
     String buttonId = caption;
     buttonId.replace(" ", "_");
     buttonId.toLowerCase();
 
-    String configTopic = "number/dtu_" + serial
+    const String configTopic = "number/dtu_" + serial
         + "/" + buttonId
         + "/config";
 
-    String cmdTopic = MqttSettings.getPrefix() + serial + "/" + commandTopic;
-    String statTopic = MqttSettings.getPrefix() + serial + "/" + stateTopic;
+    const String cmdTopic = MqttSettings.getPrefix() + serial + "/" + commandTopic;
+    const String statTopic = MqttSettings.getPrefix() + serial + "/" + stateTopic;
 
     DynamicJsonDocument root(1024);
     root["name"] = caption;
@@ -227,17 +232,17 @@ void MqttHandleHassClass::publishInverterNumber(
 
 void MqttHandleHassClass::publishInverterBinarySensor(std::shared_ptr<InverterAbstract> inv, const char* caption, const char* subTopic, const char* payload_on, const char* payload_off)
 {
-    String serial = inv->serialString();
+    const String serial = inv->serialString();
 
     String sensorId = caption;
     sensorId.replace(" ", "_");
     sensorId.toLowerCase();
 
-    String configTopic = "binary_sensor/dtu_" + serial
+    const String configTopic = "binary_sensor/dtu_" + serial
         + "/" + sensorId
         + "/config";
 
-    String statTopic = MqttSettings.getPrefix() + serial + "/" + subTopic;
+    const String statTopic = MqttSettings.getPrefix() + serial + "/" + subTopic;
 
     DynamicJsonDocument root(1024);
     root["name"] = caption;
@@ -266,7 +271,7 @@ void MqttHandleHassClass::createDeviceInfo(JsonObject& object, std::shared_ptr<I
 
 void MqttHandleHassClass::publish(const String& subtopic, const String& payload)
 {
-    String topic = Configuration.get().Mqtt_Hass_Topic;
+    String topic = Configuration.get().Mqtt.Hass.Topic;
     topic += subtopic;
-    MqttSettings.publishGeneric(topic.c_str(), payload.c_str(), Configuration.get().Mqtt_Hass_Retain);
+    MqttSettings.publishGeneric(topic.c_str(), payload.c_str(), Configuration.get().Mqtt.Hass.Retain);
 }
