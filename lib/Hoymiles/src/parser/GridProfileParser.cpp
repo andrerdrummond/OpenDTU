@@ -36,7 +36,7 @@ constexpr frozen::map<uint8_t, frozen::string, 12> profileSection = {
 struct GridProfileItemDefinition_t {
     frozen::string Name;
     frozen::string Unit;
-    uint8_t Dividor;
+    uint8_t Divider;
 };
 
 constexpr GridProfileItemDefinition_t make_value(frozen::string Name, frozen::string Unit, uint8_t divisor)
@@ -396,8 +396,8 @@ std::list<GridProfileSection_t> GridProfileParser::getProfile() const
             for (uint8_t val_id = 0; val_id < section_size; val_id++) {
                 auto itemDefinition = itemDefinitions.at(_profileValues[section_start + val_id].ItemDefinition);
 
-                float value = (_payloadGridProfile[pos] << 8) | _payloadGridProfile[pos + 1];
-                value /= itemDefinition.Dividor;
+                float value = (int16_t)((_payloadGridProfile[pos] << 8) | _payloadGridProfile[pos + 1]);
+                value /= itemDefinition.Divider;
 
                 GridProfileItem_t v;
                 v.Name = itemDefinition.Name.data();
