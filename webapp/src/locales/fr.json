@@ -98,6 +98,7 @@
         "7015": "Le sujet Hass ne doit pas contenir d'espace !",
         "7016": "LWT QOS ne doit pas être supérieur à {max}!",
         "7017": "Client ID must not longer then {max} characters!",
+        "7018": "Hass topic must end with slash (/)!",
         "8001": "L'adresse IP n'est pas valide !",
         "8002": "Le masque de réseau n'est pas valide !",
         "8003": "La passerelle n'est pas valide !",
@@ -621,7 +622,7 @@
         "ErrorReporting": "Rapport d'erreurs",
         "ErrorReportingBody": "Veuillez signaler les problèmes en utilisant la fonction fournie par <a href=\"https://github.com/tbnobody/OpenDTU/issues\" target=\"_blank\">Github</a>.",
         "Discussion": "Discussion",
-        "DiscussionBody": "Discutez avec nous sur <a href=\"https://discord.gg/WzhxEY62mB\" target=\"_blank\">Discord</a> ou sur <a href=\"https://github.com/tbnobody/OpenDTU/discussions\" target=\"_blank\">Github</a>"
+        "DiscussionBody": "Discutez avec nous sur <a href=\"https://discord.gg/46hWaXsn\" target=\"_blank\">Discord</a> ou sur <a href=\"https://github.com/tbnobody/OpenDTU/discussions\" target=\"_blank\">Github</a>"
     },
     "hints": {
         "RadioProblem": "Impossible de se connecter à un module radio configuré.. Veuillez vérifier le câblage.",
@@ -682,7 +683,12 @@
         "LogLevel": "Log Level",
         "DefaultLevel": "Default log level",
         "Module": "Module",
-        "CoreHint": "Warning: A too detailed log level of the CORE module can significantly impact performance and lead to unpredictable behavior. The log level setting should only be temporarily adjusted for targeted troubleshooting. The default setting 'Error' is sufficient for normal operation.",
+        "Module_CORE": "Noyau ESP-IDF",
+        "Module_hoymiles": "RF Hoymiles",
+        "Module_mqtt": "Client MQTT",
+        "Module_network": "Réseau",
+        "Module_webapi": "API Web",
+        "CoreHint": "Warning: A too detailed log level of the ESP-IDF Core module can significantly impact performance and lead to unpredictable behavior. The log level setting should only be temporarily adjusted for targeted troubleshooting. The default setting 'Error' is sufficient for normal operation.",
         "log_inherit": "Inherit from default",
         "log_none": "None",
         "log_error": "(E) Error",
