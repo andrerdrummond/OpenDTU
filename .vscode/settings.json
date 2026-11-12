@@ -1,4 +1,5 @@
 {
     "C_Cpp.clang_format_style": "WebKit",
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "cmake.sourceDirectory": "D:/Users/andre/Desktop/DTU-Andre/OpenDTU-2/lib/Frozen/frozen"
 }
